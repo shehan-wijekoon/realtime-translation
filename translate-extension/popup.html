@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { 
+      width: 340px; 
+      padding: 20px; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background-color: #fafafa; 
+      margin: 0; 
+      box-sizing: border-box;
+    }
+
+    h3 { 
+      margin: 0 0 16px 0; 
+      color: #111827; 
+      font-size: 16px; 
+      font-weight: 600; 
+    }
+
+    button { 
+      width: 100%; 
+      padding: 10px 16px; 
+      background-color: #2563eb; 
+      color: #ffffff; 
+      border: 1px solid transparent; 
+      border-radius: 8px; 
+      font-size: 14px;
+      font-weight: 500; 
+      cursor: pointer; 
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      transition: background-color 0.15s ease, transform 0.1s ease; 
+    }
+    button:hover { background-color: #1d4ed8; }
+    button:active { transform: scale(0.98); }
+    button:disabled { 
+      background-color: #f3f4f6; 
+      color: #9ca3af;
+      border: 1px solid #e5e7eb;
+      cursor: not-allowed; 
+    }
+
+    /* FIXED CONTAINER WITH SCROLLBAR */
+    #subtitles { 
+      margin-top: 14px; 
+      padding: 10px; 
+      background-color: #f3f4f6; /* Subtle gray background for the container */
+      min-height: 120px; 
+      max-height: 250px;       /* Capped height so it won't stretch the extension */
+      overflow-y: auto;        /* Adds the vertical scrollbar automatically */
+      border-radius: 8px; 
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;  /* Stack bubbles vertically */
+      gap: 8px;                /* Space between bubbles */
+    }
+
+    /* MODERN BUBBLE STYLING */
+    .subtitle-bubble {
+      background-color: #ffffff;
+      color: #1f2937;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      line-height: 1.4;
+      border-left: 3px solid #2563eb; /* Clean blue accent border on the left */
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+      word-wrap: break-word;
+      animation: fadeIn 0.2s ease-in-out; /* Smooth pop-in animation */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h3>Live Audio Translator</h3>
+  <button id="startBtn">Start Capturing Tab Audio</button>
+  <div id="subtitles">
+    <!-- Bubbles will inject dynamically here -->
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
