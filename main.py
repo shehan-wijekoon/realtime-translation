@@ -5,7 +5,7 @@ from groq import Groq
 app = FastAPI()
 
 # Paste your free Groq API key here if you don't use environment variables
-client = Groq(api_key="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")
+client = Groq(api_key="#")
 
 @app.websocket("/ws/stream")
 async def websocket_endpoint(websocket: WebSocket):
