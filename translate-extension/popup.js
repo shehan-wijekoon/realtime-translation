@@ -10,18 +10,15 @@ document.getElementById('startBtn').addEventListener('click', async () => {
   socket = new WebSocket('ws://localhost:8000/ws/stream');
   
   socket.onmessage = (event) => {
-    const translatedText = event.data.strip ? event.data.strip() : event.data;
+    const translatedText = event.data.trim();
     if (!translatedText) return;
 
-    // 1. Create a brand new bubble element
+    // Direct insertion! Every incoming text is brand new now.
     const bubble = document.createElement('div');
     bubble.className = 'subtitle-bubble';
     bubble.innerText = translatedText;
 
-    // 2. Append the new bubble to the scrolling container
     subtitlesContainer.appendChild(bubble);
-
-    // 3. Auto-scroll to the bottom so the user always sees the newest translation
     subtitlesContainer.scrollTop = subtitlesContainer.scrollHeight;
   };
 

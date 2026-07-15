@@ -5,31 +5,30 @@ from groq import Groq
 app = FastAPI()
 
 # Paste your free Groq API key here if you don't use environment variables
-client = Groq(api_key=" # ")
+client = Groq(api_key="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")
 
 @app.websocket("/ws/stream")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     print("Chrome Extension Connected!")
     
-    # Define a clean temporary file path
-    temp_filename = "temp_stream.webm"
+    temp_filename = "temp_chunk.webm"
+    header_bytes = b"" # This will store Chrome's initialization header
     
-    # If an old temp file exists from a previous run, wipe it out to start fresh
-    if os.path.exists(temp_filename):
-        os.remove(temp_filename)
-        
     try:
         while True:
-            # Receive raw binary audio chunk from Chrome
             audio_chunk = await websocket.receive_bytes()
             
-            # CRUCIAL FIX: "ab" means Append Bytes. 
-            # We continuously build the file so it keeps its valid WebM headers!
-            with open(temp_filename, "ab") as f:
-                f.write(audio_chunk)
+            # The very first chunk contains the vital WebM file headers.
+            # We save it once so we can reuse it.
+            if not header_bytes:
+                header_bytes = audio_chunk
             
-            # Send the growing audio file to Groq for translation
+            # Write a FRESH file every time ("wb") using the saved header + the new chunk data
+            with open(temp_filename, "wb") as f:
+                f.write(header_bytes + audio_chunk)
+            
+            # Send exactly 3-6 seconds of audio to Groq (protects your limits!)
             with open(temp_filename, "rb") as audio_file:
                 translation = client.audio.translations.create(
                     file=audio_file,
@@ -38,13 +37,15 @@ async def websocket_endpoint(websocket: WebSocket):
                 )
             
             if translation.text.strip():
-                print(f"Translated Text: {translation.text}") # See it in your backend console
-                await websocket.send_text(translation.text)   # Stream it to the Chrome popup
+                print(f"Clean Fresh Chunk: {translation.text}")
+                await websocket.send_text(translation.text)
                 
     except Exception as e:
         print(f"Connection closed or Error: {e}")
     finally:
-        await websocket.close()
-        # Clean up the file when the user stops capturing
+        try:
+            await websocket.close()
+        except:
+            pass
         if os.path.exists(temp_filename):
             os.remove(temp_filename)
